@@ -12,5 +12,7 @@ router.get('/health', (_req, res) => {
 })
 
 router.post('/habits', habitsController.store)
+router.get('/habits', habitsController.index)
+router.delete('/habits/:id', habitsController.delete)
 
 export default router
