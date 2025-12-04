@@ -71,9 +71,7 @@ class HabitsController {
             _id: habit.data.id
         })
 
-        return res.status(204).json({
-            message: 'Habit deleted successfully'
-        })
+        return res.status(204).json({message: 'Habit deleted successfully!'})
     }
 }
 
