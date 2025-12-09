@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { habitModel } from "../models/habitsModel";
+import { habitModel } from "../models/habitsModel"
 import { z } from 'zod'
 import { buildValidationErrorMessage } from "../../utils/buildValidationErrorMessage";
 import dayjs from "dayjs";

@@ -2,7 +2,7 @@ import {Schema, model} from 'mongoose';
 
 const FocusTimeSchema = new Schema(
     {
-        typeFrom: { //quando o tempo começa
+        timeFrom: { //quando o tempo começa
             type: Date,
             required: true
         },
