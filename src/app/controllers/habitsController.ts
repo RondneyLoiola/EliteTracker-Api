@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { habitModel } from "../models/habitsModel";
 import { z } from 'zod'
 import { buildValidationErrorMessage } from "../../utils/buildValidationErrorMessage";
+import dayjs from "dayjs";
 
 class HabitsController {
     store = async (req: Request, res: Response): Promise<Response> => {
@@ -67,11 +68,90 @@ class HabitsController {
             })
         }
 
+        const findHabit = await habitModel.findOne({
+            _id: habit.data.id
+        })
+
+        if (!findHabit) {
+            return res.status(404).json({
+                message: 'Habit not found'
+            })
+        }
+
         await habitModel.deleteOne({
             _id: habit.data.id
         })
 
-        return res.status(204).json({message: 'Habit deleted successfully!'})
+        return res.status(204).json({ message: 'Habit deleted successfully!' })
+    }
+
+    toggle = async (req: Request, res: Response) => {
+        const schema = z.object({
+            id: z.string()
+        })
+
+        const validated = schema.safeParse(req.params)
+
+        if (!validated.success) {
+            const errors = buildValidationErrorMessage(validated.error.issues)
+
+            return res.status(422).json({
+                message: errors
+            })
+        }
+
+        const findHabit = await habitModel.findOne({
+            _id: validated.data.id
+        })
+
+        if (!findHabit) {
+            return res.status(404).json({
+                message: 'Habit not found'
+            })
+        }
+
+        const now = dayjs().startOf('day').toISOString(); //começo do dia
+
+        //toObject para transformar em array
+        const isHabitCompletedOnDate = findHabit
+            .toObject()
+            ?.completedDates.find(
+                (item) => dayjs(String(item)).toISOString() === now
+            )
+
+        if (isHabitCompletedOnDate) {
+            const habitUpdated = await habitModel.findOneAndUpdate(
+                {
+                    _id: validated.data.id //where
+                },
+                {
+                    $pull: { //remove o now de completedDates
+                        completedDates: now
+                    }
+                },
+                {
+                    returnDocument: 'after' //retorna o documento depois do updated
+                }
+            )
+
+            return res.json(habitUpdated)
+        }
+
+        const habitUpdated = await habitModel.findOneAndUpdate(
+            {
+                _id: validated.data.id //where
+            },
+            {
+                $push: { //coloca o now de completedDates
+                    completedDates: now
+                }
+            },
+            {
+                returnDocument: 'after' //retorna o documento depois do updated
+            }
+        )
+
+        return res.json(habitUpdated)
     }
 }
 

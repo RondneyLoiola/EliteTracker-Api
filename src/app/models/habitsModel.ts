@@ -8,7 +8,6 @@ const HabitSchema = new Schema(
         },
         completedDates: {
             type: [Date], //array de datas
-
         }
     },
     {
