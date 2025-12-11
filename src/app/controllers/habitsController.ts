@@ -3,6 +3,7 @@ import { habitModel } from "../models/habitsModel"
 import { z } from 'zod'
 import { buildValidationErrorMessage } from "../../utils/buildValidationErrorMessage";
 import dayjs from "dayjs";
+import mongoose from "mongoose";
 
 class HabitsController {
     store = async (req: Request, res: Response): Promise<Response> => {
@@ -152,6 +153,61 @@ class HabitsController {
         )
 
         return res.json(habitUpdated)
+    }
+
+    metrics = async (req: Request, res: Response) => {
+        const schema = z.object({
+            id: z.string(), //vem do req.params
+            date: z.coerce.date() //vem do req.query
+        })
+
+        const validated = schema.safeParse({ ...req.params, ...req.query })
+        //pega tudo que vem do req.params e req.query e transforma em um objeto
+        //transforma o id e date em um objeto
+
+        if (!validated.success) {
+            const errors = buildValidationErrorMessage(validated.error.issues)
+
+            return res.status(422).json({
+                message: errors
+            })
+        }
+
+        //transformando em data, pois o mongoose aceita apenas data
+        const dateFrom = dayjs(validated.data.date).startOf('month')//pega o primeiro dia do mes
+        const dateTo = dayjs(validated.data.date).endOf('month')//pega o ultimo dia do mes
+
+        //console.log(dateTo.diff(dateFrom, 'days') + 1) 
+
+        //destruturado em array
+        const [habitMetrics] = await habitModel.aggregate().match({
+            _id: new mongoose.Types.ObjectId(validated.data.id)
+        }).project({
+            _id: 1,
+            name: 1,
+            completedDates: {
+                $filter: {
+                    input: '$completedDates',
+                    as: 'completedDate',
+                    cond: {
+                        $and: [
+                            {
+                                $gte: ['$$completedDate', dateFrom.toDate()]
+                            },
+                            {
+                                $lte: ['$$completedDate', dateTo.toDate()]
+                            }
+                        ]
+                    }
+                }
+            }
+        })
+
+        if(!habitMetrics) {
+            return res.status(404).json({message: 'Habit not found'})
+        }
+
+        return res.status(200).json({habitMetrics})
     }
 }
 

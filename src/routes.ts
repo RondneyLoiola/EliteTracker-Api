@@ -15,6 +15,7 @@ router.get('/health', (_req, res) => {
 
 router.post('/habits', habitsController.store)
 router.get('/habits', habitsController.index)
+router.get('/habits/:id/metrics', habitsController.metrics)
 router.delete('/habits/:id', habitsController.delete)
 router.patch('/habits/:id/toggle', habitsController.toggle)
 
