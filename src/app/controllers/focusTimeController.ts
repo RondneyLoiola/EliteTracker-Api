@@ -35,8 +35,8 @@ class FocusTimeController{
         }
 
         const createdFocusTime = await focusTimeModel.create({
-            timeFrom: timeFrom.toDate(),
-            timeTo: timeTo.toDate()
+            timeFrom: timeFrom.toDate(), //transforma em Date
+            timeTo: timeTo.toDate() //transforma em Date
         })
 
         return res.status(201).json(createdFocusTime)
