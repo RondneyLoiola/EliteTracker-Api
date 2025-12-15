@@ -41,6 +41,83 @@ class FocusTimeController{
 
         return res.status(201).json(createdFocusTime)
     }
+
+    index = async (req: Request, res: Response) => {
+        const schema = z.object({
+            date: z.coerce.date()
+        })
+
+        const validated = schema.safeParse(req.query)
+        //recebe do queryParams
+
+        if (!validated.success) {
+            const errors = buildValidationErrorMessage(validated.error.issues)
+
+            return res.status(422).json({
+                message: errors
+            })
+        }
+
+        const startDate = dayjs(validated.data.date).startOf('month')
+        const endDate = dayjs(validated.data.date).endOf('month')
+
+        const focusTimes = await focusTimeModel.find({
+            timeFrom: {
+                $gte: startDate.toDate(),
+                $lte: endDate.toDate()
+            }
+        }).sort({
+            timeFrom: 1
+        })
+
+        return res.status(200).json(focusTimes)
+    }
+
+    metricsByMonth = async (req: Request, res: Response) => {
+        const schema = z.object({
+            date: z.coerce.date()
+        })
+
+        const validated = schema.safeParse(req.query)
+        //recebe do queryParams
+
+        if (!validated.success) {
+            const errors = buildValidationErrorMessage(validated.error.issues)
+
+            return res.status(422).json({
+                message: errors
+            })
+        }
+
+        const startDate = dayjs(validated.data.date).startOf('month')
+        const endDate = dayjs(validated.data.date).endOf('month')
+
+        const focusTimeMetrics = await focusTimeModel.aggregate().match({
+            timeFrom: {
+                $gte: startDate.toDate(),
+                $lte: endDate.toDate()
+            }
+        }).project({
+            year: {
+                $year: '$timeFrom'
+            },
+            month: {
+                $month: '$timeFrom'
+            },
+            day: {
+                $dayOfMonth: '$timeFrom'
+            }
+        }).group({
+            _id: ['$year', '$month', '$day'],
+            count: {
+                $sum: 1
+            }
+        }).sort({
+            _id: 1 //ordem crescente
+        })
+
+        return res.status(200).json(focusTimeMetrics)
+    }
 }
 
 export default FocusTimeController

@@ -20,5 +20,7 @@ router.delete('/habits/:id', habitsController.delete)
 router.patch('/habits/:id/toggle', habitsController.toggle)
 
 router.post('/focus-time', focusTimeController.store)
+router.get('/focus-time', focusTimeController.index)
+router.get('/focus-time/metrics', focusTimeController.metricsByMonth)
 
 export default router
