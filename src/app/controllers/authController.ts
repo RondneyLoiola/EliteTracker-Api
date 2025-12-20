@@ -1,9 +1,12 @@
 //Auth com GitHub
 import type { Response, Request } from "express";
 import axios, { isAxiosError } from 'axios'
+import jwt from 'jsonwebtoken'
 
-
-const {GITHUB_CLIENT_ID: clientId, GITHUB_CLIENT_SECRET: clientSecret} = process.env
+const { 
+    GITHUB_CLIENT_ID: clientId, 
+    GITHUB_CLIENT_SECRET: clientSecret
+} = process.env
 
 class AuthController {
     auth = async (req: Request, res: Response) => {
@@ -35,13 +38,18 @@ class AuthController {
 
             const { node_id: id, avatar_url: avatarUrl, name } = userDataResult.data
 
-            return res.status(201).json({ id, avatarUrl, name })
+            const token = jwt.sign({ id }, 'c688b92aa4c760d0cf6371a2eca26dbe', {
+                expiresIn: '1d',
+            })
+            // tem que ser colocado no dotenv as configs do jwt
+
+            return res.status(201).json({ id, avatarUrl, name, token })
         } catch (error) {
-            if(isAxiosError(error)){
+            if (isAxiosError(error)) {
                 return res.status(400).json(error.response?.data)
             }
 
-            return res.status(500).json({message: 'Something went wrong...'})
+            return res.status(500).json({ message: 'Something went wrong...' })
         }
     }
 }
