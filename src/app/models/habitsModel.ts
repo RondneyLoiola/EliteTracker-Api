@@ -2,13 +2,9 @@ import { Schema, model } from "mongoose";
 
 const HabitSchema = new Schema(
     {
-        name: {
-            type: String,
-            required: true
-        },
-        completedDates: {
-            type: [Date], //array de datas
-        }
+        name: String,
+        completedDates: [Date], //array de datas
+        userId: String
     },
     {
         timestamps: true,

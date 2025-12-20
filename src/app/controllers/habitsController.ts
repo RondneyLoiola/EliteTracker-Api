@@ -42,14 +42,17 @@ class HabitsController {
 
         const newHabit = await habitModel.create({
             name: habit.data.name,
-            completedDates: []
+            completedDates: [],
+            userId: req.user.id
         })
 
         return res.status(201).json(newHabit)
     }
 
     index = async (req: Request, res: Response): Promise<Response> => {
-        const habits = (await habitModel.find().sort({ name: 1 }))
+        const habits = await habitModel.find({
+            userId: req.user.id //busca os habitos do user
+        }).sort({ name: 1 })
 
         return res.status(200).json(habits)
     }
@@ -70,7 +73,8 @@ class HabitsController {
         }
 
         const findHabit = await habitModel.findOne({
-            _id: habit.data.id
+            _id: habit.data.id,
+            userId: req.user.id
         })
 
         if (!findHabit) {
@@ -102,7 +106,8 @@ class HabitsController {
         }
 
         const findHabit = await habitModel.findOne({
-            _id: validated.data.id
+            _id: validated.data.id,
+            userId: req.user.id
         })
 
         if (!findHabit) {
@@ -181,7 +186,8 @@ class HabitsController {
 
         //destruturado em array
         const [habitMetrics] = await habitModel.aggregate().match({
-            _id: new mongoose.Types.ObjectId(validated.data.id)
+            _id: new mongoose.Types.ObjectId(validated.data.id),
+            userId: req.user.id
         }).project({
             _id: 1,
             name: 1,

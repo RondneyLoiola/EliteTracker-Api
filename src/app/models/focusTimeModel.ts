@@ -1,15 +1,11 @@
 import {Schema, model} from 'mongoose';
+import { required } from 'zod/mini';
 
 const FocusTimeSchema = new Schema(
     {
-        timeFrom: { //quando o tempo começa
-            type: Date,
-            required: true
-        },
-        timeTo: { //quando o tempo termina
-            type: Date,
-            required: true
-        }
+        timeFrom: Date, //quando o tempo começa
+        timeTo: Date, //quando o tempo termina
+        userId: String
     },
     {
         versionKey: false,
@@ -17,4 +13,4 @@ const FocusTimeSchema = new Schema(
     }
 )
 
-export const focusTimeModel = model('FocusTime', FocusTimeSchema);
+export const focusTimeModel = model('FocusTime', FocusTimeSchema); 
