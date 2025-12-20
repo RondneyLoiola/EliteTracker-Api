@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from 'jsonwebtoken'
+import { User } from "../../@types/user.type";
 
 export function authMiddleware(req: Request, res: Response, next: NextFunction) {
     const authToken = req.headers.authorization
@@ -8,14 +9,18 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
         return res.status(401).json({ message: 'Token not provided!' })
     }
 
-    const token = authToken.split(' ')
+    const token = authToken.split(' ')[1]
 
-    jwt.verify(token, String(process.env.JWT_SECRET), (err, decoded) => {
+    try {
+        jwt.verify(token, String(process.env.JWT_SECRET), (err, decoded) => {
         if (err) {
-            return res.status(401).json({ message: 'Token is invalid!' })
+            throw new Error()
         }
-
-        req.userId = decoded?.id
-        next()
+        req.user = decoded as User;
     })
+    } catch (error) {
+        return res.status(401).json({ message: 'Token is invalid!' })
+    }
+
+    return next()
 }

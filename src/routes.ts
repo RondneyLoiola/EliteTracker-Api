@@ -19,7 +19,8 @@ router.get('/health', (_req, res) => {
 router.get('/auth', authController.auth)
 router.get('/auth/callback', authController.authCallback)
 
-router.get('/habits', authMiddleware, habitsController.index)
+router.use(authMiddleware)
+router.get('/habits', habitsController.index)
 router.get('/habits/:id/metrics', habitsController.metrics)
 router.post('/habits', habitsController.store)
 router.delete('/habits/:id', habitsController.delete)
