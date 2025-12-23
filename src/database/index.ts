@@ -8,7 +8,7 @@ export async function setupMongo() {
             return
         }
 
-        console.log('✅ Conectando ao banco de dados...')
+        console.log('Conectando ao banco de dados...')
         await mongoose.connect(String(mongoUrl), {
             serverSelectionTimeoutMS: 5000
         })
