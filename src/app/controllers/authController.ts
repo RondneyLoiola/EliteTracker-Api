@@ -5,7 +5,9 @@ import jwt from 'jsonwebtoken'
 
 const { 
     GITHUB_CLIENT_ID: clientId, 
-    GITHUB_CLIENT_SECRET: clientSecret
+    GITHUB_CLIENT_SECRET: clientSecret,
+    JWT_SECRET: jwtSecret,
+    JWT_EXPIRES_IN: jwtExpiresIn
 } = process.env
 
 class AuthController {
@@ -38,10 +40,9 @@ class AuthController {
 
             const { node_id: id, avatar_url: avatarUrl, name } = userDataResult.data
 
-            const token = jwt.sign({ id }, 'c688b92aa4c760d0cf6371a2eca26dbe', {
-                expiresIn: '1d',
+            const token = jwt.sign({ id }, String(jwtSecret), {
+                expiresIn: Number(jwtExpiresIn) || '1d',
             })
-            // tem que ser colocado no dotenv as configs do jwt
 
             return res.status(201).json({ id, avatarUrl, name, token })
         } catch (error) {

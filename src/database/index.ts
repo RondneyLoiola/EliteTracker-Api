@@ -1,15 +1,18 @@
 import mongoose from "mongoose";
 
-export async function setupMongo(){
+const { MONGO_URL: mongoUrl } = process.env
+
+export async function setupMongo() {
     try {
-        if(mongoose.connection.readyState === 1){
+        if (mongoose.connection.readyState === 1) {
             return
         }
 
         console.log('✅ Conectando ao banco de dados...')
-        await mongoose.connect('mongodb://localhost:27017/eliteTracker', {
+        await mongoose.connect(String(mongoUrl), {
             serverSelectionTimeoutMS: 5000
         })
+        console.log('✅ Conectado ao banco de dados')
     } catch (_error) {
         throw new Error("❌ Não foi possível conectar ao banco de dados")
     }

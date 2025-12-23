@@ -12,7 +12,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
     const token = authToken.split(' ')[1]
 
     try {
-        jwt.verify(token, String(process.env.JWT_SECRET), (err, decoded) => {
+        jwt.verify(String(token), String(process.env.JWT_SECRET), (err, decoded) => {
         if (err) {
             throw new Error()
         }
