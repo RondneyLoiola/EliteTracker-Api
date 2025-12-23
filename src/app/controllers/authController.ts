@@ -3,8 +3,8 @@ import type { Response, Request } from "express";
 import axios, { isAxiosError } from 'axios'
 import jwt from 'jsonwebtoken'
 
-const { 
-    GITHUB_CLIENT_ID: clientId, 
+const {
+    GITHUB_CLIENT_ID: clientId,
     GITHUB_CLIENT_SECRET: clientSecret,
     JWT_SECRET: jwtSecret,
     JWT_EXPIRES_IN: jwtExpiresIn
@@ -14,7 +14,8 @@ class AuthController {
     auth = async (req: Request, res: Response) => {
         const redirectUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}`
 
-        res.redirect(redirectUrl)
+        return res.status(200).json({ redirectUrl }) //-> pegando pelo frontend
+        //res.redirect(redirectUrl) //redireciona para a tela de login do github -> teste pelo backend
     }
 
     authCallback = async (req: Request, res: Response) => {

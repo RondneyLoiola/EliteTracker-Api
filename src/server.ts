@@ -10,7 +10,7 @@ const app = express();
 
 setupMongo().then(() => {
     app.use(cors({
-        origin: true
+        origin: '*'
     }))
     app.use(express.json());
     
