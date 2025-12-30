@@ -213,7 +213,7 @@ class HabitsController {
             return res.status(404).json({message: 'Habit not found'})
         }
 
-        return res.status(200).json({habitMetrics})
+        return res.status(200).json(habitMetrics)
     }
 }
 

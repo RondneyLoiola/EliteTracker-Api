@@ -19,7 +19,7 @@ setupMongo().then(() => {
     app.listen(4000, () => {
         console.log('🚀 Server running on port 4000');
     })
-}).catch(() => console.log('❌ Não foi possível conectar ao banco de dados'))
+}).catch(() => console.log('❌ Unable to connect to the database.'))
 
 
 
