@@ -2,6 +2,10 @@ import type { Response, Request } from "express";
 import { z } from 'zod'
 import dayjs from "dayjs";
 
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc)
+
 import { buildValidationErrorMessage } from "../../utils/buildValidationErrorMessage";
 import { focusTimeModel } from "../models/focusTimeModel";
 
@@ -58,8 +62,9 @@ class FocusTimeController{
             })
         }
 
-        const startDate = dayjs(validated.data.date).startOf('day')
-        const endDate = dayjs(validated.data.date).endOf('day')
+        // Força o uso do UTC para evitar problemas de fuso horário
+        const startDate = dayjs.utc(validated.data.date).startOf('day')
+        const endDate = dayjs.utc(validated.data.date).endOf('day')
 
         const focusTimes = await focusTimeModel.find({
             timeFrom: {
@@ -80,7 +85,6 @@ class FocusTimeController{
         })
 
         const validated = schema.safeParse(req.query)
-        //recebe do queryParams
 
         if (!validated.success) {
             const errors = buildValidationErrorMessage(validated.error.issues)
@@ -90,8 +94,9 @@ class FocusTimeController{
             })
         }
 
-        const startDate = dayjs(validated.data.date).startOf('month')
-        const endDate = dayjs(validated.data.date).endOf('month')
+        // Também use UTC aqui
+        const startDate = dayjs.utc(validated.data.date).startOf('month')
+        const endDate = dayjs.utc(validated.data.date).endOf('month')
 
         const focusTimeMetrics = await focusTimeModel.aggregate().match({
             timeFrom: {
@@ -115,7 +120,7 @@ class FocusTimeController{
                 $sum: 1
             }
         }).sort({
-            _id: 1 //ordem crescente
+            _id: 1
         })
 
         return res.status(200).json(focusTimeMetrics)
