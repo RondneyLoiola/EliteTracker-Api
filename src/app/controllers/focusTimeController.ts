@@ -49,7 +49,6 @@ class FocusTimeController{
         })
 
         const validated = schema.safeParse(req.query)
-        //recebe do queryParams
 
         if (!validated.success) {
             const errors = buildValidationErrorMessage(validated.error.issues)
@@ -59,8 +58,8 @@ class FocusTimeController{
             })
         }
 
-        const startDate = dayjs(validated.data.date).startOf('month')
-        const endDate = dayjs(validated.data.date).endOf('month')
+        const startDate = dayjs(validated.data.date).startOf('day')
+        const endDate = dayjs(validated.data.date).endOf('day')
 
         const focusTimes = await focusTimeModel.find({
             timeFrom: {
