@@ -4,7 +4,7 @@ API RESTful desenvolvida em TypeScript para gerenciamento e rastreamento de dado
 
 ## 📋 Sobre o Projeto
 
-EliteTracker API é uma API backend robusta construída com Node.js e TypeScript, projetada para fornecer endpoints seguros e eficientes para aplicações de rastreamento.
+EliteTracker API é uma API backend robusta construída com Node.js e TypeScript, projetada para melhorar a produtividade do dia a dia
 
 ## 🚀 Tecnologias Utilizadas
 
