@@ -5,7 +5,6 @@ import express from 'express';
 import router from './routes';
 import { setupMongo } from './database';
 
-
 const app = express();
 
 setupMongo().then(() => {
@@ -16,10 +15,11 @@ setupMongo().then(() => {
     
     app.use(router)
 
-    app.listen(4000, () => {
-        console.log('🚀 Server running on port 4000');
+    const PORT = process.env.PORT || 4000; // ← Mudança aqui
+
+    app.listen(PORT, () => {
+        console.log(`🚀 Server running on port ${PORT}`);
     })
-}).catch(() => console.log('❌ Unable to connect to the database.'))
-
-
-
+}).catch((err) => {
+    console.log('❌ Unable to connect to the database.', err)
+})

@@ -1,19 +1,17 @@
-import mongoose from "mongoose";
-
-const { MONGO_URL: mongoUrl } = process.env
+// src/database/index.ts
+import mongoose from 'mongoose';
 
 export async function setupMongo() {
     try {
-        if (mongoose.connection.readyState === 1) {
-            return
+        if (!process.env.MONGODB_URI) {
+            throw new Error('MONGODB_URI não está definida');
         }
 
-        console.log('🎲 Connecting to the database...')
-        await mongoose.connect(String(mongoUrl), {
-            serverSelectionTimeoutMS: 5000
-        })
-        console.log('✅ Connected to the database')
-    } catch (_error) {
-        throw new Error("❌ Unable to connect to the database.")
+        await mongoose.connect(process.env.MONGODB_URI);
+        
+        console.log('✅ Connected to MongoDB Atlas');
+    } catch (error) {
+        console.error('❌ MongoDB connection error:', error);
+        throw error;
     }
 }
